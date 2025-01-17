@@ -329,14 +329,16 @@ function extractWhitespaces(ast /*, options*/) {
 
 function addIsSelfClosing(ast /*, options */) {
   ast.walk((node) => {
-    node.isSelfClosing =
+    node.isVoidElement = node.type === "element" &&
+      node.tagDefinition.isVoid;
+    node.isVueSelfClosing =
       !node.children ||
+      node.isVoidElement ||
       (node.type === "element" &&
-        (node.tagDefinition.isVoid ||
           // self-closing
           (node.endSourceSpan &&
             node.startSourceSpan.start === node.endSourceSpan.start &&
-            node.startSourceSpan.end === node.endSourceSpan.end)));
+            node.startSourceSpan.end === node.endSourceSpan.end));
   });
 }
 

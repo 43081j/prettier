@@ -44,7 +44,7 @@ function embed(path, options) {
         return;
       }
 
-      if (!node.isSelfClosing && isVueNonHtmlBlock(node, options)) {
+      if (!node.isVueSelfClosing && isVueNonHtmlBlock(node, options)) {
         const parser = inferElementParser(node, options);
         if (!parser) {
           return;

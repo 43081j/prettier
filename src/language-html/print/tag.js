@@ -24,7 +24,7 @@ import {
 
 function printClosingTag(node, options) {
   return [
-    node.isSelfClosing ? "" : printClosingTagStart(node, options),
+    node.isVoidElement ? "" : printClosingTagStart(node, options),
     printClosingTagEnd(node, options),
   ];
 }
@@ -67,7 +67,7 @@ function printClosingTagSuffix(node, options) {
 }
 
 function printClosingTagStartMarker(node, options) {
-  assert(!node.isSelfClosing);
+  assert(!node.isVoidElement);
   /* c8 ignore next 3 */
   if (shouldNotPrintClosingTag(node, options)) {
     return "";
@@ -99,10 +99,6 @@ function printClosingTagEndMarker(node, options) {
       return "}}";
     case "angularIcuExpression":
       return "}";
-    case "element":
-      if (node.isSelfClosing) {
-        return "/>";
-      }
     // fall through
     default:
       return ">";
@@ -111,7 +107,7 @@ function printClosingTagEndMarker(node, options) {
 
 function shouldNotPrintClosingTag(node, options) {
   return (
-    !node.isSelfClosing &&
+    !node.isVoidElement &&
     !node.endSourceSpan &&
     (hasPrettierIgnore(node) || shouldPreserveContent(node.parent, options))
   );
@@ -219,13 +215,7 @@ function printAttributes(path, options, print) {
   const { node } = path;
 
   if (!isNonEmptyArray(node.attrs)) {
-    return node.isSelfClosing
-      ? /**
-         *     <br />
-         *        ^
-         */
-        " "
-      : "";
+    return "";
   }
 
   const ignoreAttributeData =
@@ -285,18 +275,16 @@ function printAttributes(path, options, print) {
      *                ~
      *     /></span>
      */
-    (node.isSelfClosing &&
+    (node.isVoidElement &&
       needsToBorrowLastChildClosingTagEndMarker(node.parent)) ||
     forceNotToBreakAttrContent
   ) {
-    parts.push(node.isSelfClosing ? " " : "");
+    parts.push("");
   } else {
     parts.push(
       options.bracketSameLine
-        ? node.isSelfClosing
-          ? " "
-          : ""
-        : node.isSelfClosing
+        ? ""
+        : node.isVoidElement
           ? line
           : softline,
     );
@@ -318,7 +306,7 @@ function printOpeningTag(path, options, print) {
   return [
     printOpeningTagStart(node, options),
     printAttributes(path, options, print),
-    node.isSelfClosing ? "" : printOpeningTagEnd(node),
+    node.isVoidElement ? "" : printOpeningTagEnd(node),
   ];
 }
 
@@ -376,7 +364,7 @@ function printOpeningTagStartMarker(node, options) {
 }
 
 function printOpeningTagEndMarker(node) {
-  assert(!node.isSelfClosing);
+  assert(!node.isVoidElement);
   switch (node.type) {
     case "ieConditionalComment":
       return "]>";

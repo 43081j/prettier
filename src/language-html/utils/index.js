@@ -43,7 +43,7 @@ function shouldPreserveContent(node, options) {
   if (
     node.type === "ieConditionalComment" &&
     node.lastChild &&
-    !node.lastChild.isSelfClosing &&
+    !node.lastChild.isVoidElement &&
     !node.lastChild.endSourceSpan
   ) {
     return true;

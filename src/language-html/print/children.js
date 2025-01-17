@@ -95,7 +95,7 @@ function printBetweenLine(prevNode, nextNode) {
              *            ~
              *     -->
              */
-            nextNode.isSelfClosing ||
+            nextNode.isVoidElement ||
             /**
              *     123<span
              *             ~
@@ -109,7 +109,7 @@ function printBetweenLine(prevNode, nextNode) {
          *     />123
          */
         (prevNode.type === "element" &&
-          prevNode.isSelfClosing &&
+          prevNode.isVoidElement &&
           needsToBorrowPrevClosingTagEndMarker(nextNode))
       ? ""
       : !nextNode.isLeadingSpaceSensitive ||
